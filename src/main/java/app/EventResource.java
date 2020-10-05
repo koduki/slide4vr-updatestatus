@@ -3,6 +3,8 @@ package app;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.PathElement;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import static dev.nklab.jl2.web.gcp.datastore.Extentions.*;
 import dev.nklab.jl2.web.profile.Trace;
 import dev.nklab.jl2.web.profile.WebTrace;
@@ -17,9 +19,15 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Path("/")
 public class EventResource {
+
+    @ConfigProperty(name = "slide4vr.gcp.projectid")
+    String projectId;
+    @ConfigProperty(name = "slide4vr.gcp.bucketname.slide")
+    String slideBucket;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -39,6 +47,13 @@ public class EventResource {
 
     @Trace
     void updateUploadStatus(String userId, String key) {
+        var baseUrl = "https://storage.googleapis.com";
+        var storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+        var bucket = storage.get(slideBucket);
+        var option = Storage.BlobListOption.prefix(userId + "/" + key);
+        var items = bucket.list(option).iterateAll();
+        var url = baseUrl + "/" + slideBucket + "/" + items.iterator().next().getName();
+
         var datastore = DatastoreOptions.getDefaultInstance().getService();
         var slideKey = datastore.newKeyFactory()
                 .addAncestors(PathElement.of("User", userId))
@@ -49,6 +64,7 @@ public class EventResource {
         if (slide != null) {
             var entity = Entity.newBuilder(slide)
                     .set("is_uploaded", noindex(true))
+                    .set("thumbnail", url)
                     .build();
             datastore.update(entity);
         }
