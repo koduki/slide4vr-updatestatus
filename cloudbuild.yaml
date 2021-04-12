@@ -1,11 +1,12 @@
 steps:
-- name: 'gcr.io/cloud-builders/mvn'
-  args: ['package']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/slide4vr-on-transformed', '-f', 'src/main/docker/Dockerfile.jvm', '.']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/slide4vr-on-transformed']
+# - name: 'gcr.io/support-tools-299121/graalvm-builder'
+#   args: ['./mvnw', 'package', '-Pnative']
+#   timeout: 3600s
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['build', '-t', 'gcr.io/$PROJECT_ID/slide4vr-on-transformed', '-f', 'src/main/docker/Dockerfile.native', '.']
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['push', 'gcr.io/$PROJECT_ID/slide4vr-on-transformed']
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['run', 'deploy', 'slide4vr-on-transformed', '--image', 'gcr.io/$PROJECT_ID/slide4vr-on-transformed', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
-images:
-- gcr.io/$PROJECT_ID/slide4vr-on-transformed
+# images:
+# - gcr.io/$PROJECT_ID/slide4vr-on-transformed
