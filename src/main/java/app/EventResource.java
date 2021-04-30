@@ -19,11 +19,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Path("/")
@@ -39,29 +36,31 @@ public class EventResource {
 
     @GET
     @Path("/healthcheck")
-    public Response healthcheck(){
-        return Response.ok("success").build();
+    public Response healthcheck() {
+        var options = DatastoreOptions.getDefaultInstance();
+        var datastore = options.getService();
+
+        return Response.ok("success" + ":" + datastore.getClass().getName()).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @WebTrace
-    // @Authenticated
-    public Response invoke(@Context HttpHeaders headers, @Context SecurityContext ctx, Map<String, String> params)
-            throws IOException {
-        var key = params.get("key");
-        // var userId = ctx.getUserPrincipal().getName();
-        var userId = params.get("userId");
-        System.err.println(key);
+    public Response invoke(Map<String, Object> params) throws IOException {
+        var targetParams = (Map<String, String>) params.get("targetParams");
+        System.out.println("params:" + params);
+        System.out.println("targetParams:" + targetParams);
+        var key = params.get("key").toString();
+        var userId = params.get("userId").toString();
 
         updateUploadStatus(userId, key);
 
         trigger.callTrigger(
                 Map.of(
-                    "userId", userId, 
-                    "key", key, 
-                    "targetParams", Map.of("args", userId + "," + key)),
+                        "userId", userId,
+                        "key", key,
+                        "targetParams", Map.of("args", userId + "," + key)),
                 "always");
 
         return Response.ok().build();

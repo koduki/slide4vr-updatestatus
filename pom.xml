@@ -12,11 +12,13 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus-plugin.version>1.13.1.Final</quarkus-plugin.version>
+        <quarkus-plugin.version>1.13.2.Final</quarkus-plugin.version>
         <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-        <quarkus.platform.version>1.13.1.Final</quarkus.platform.version>
+        <quarkus.platform.version>1.13.2.Final</quarkus.platform.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+        <libraries.bom.version>20.1.0</libraries.bom.version>
+        <gcp-graal.version>0.4.0</gcp-graal.version>
     </properties>
     <repositories>
         <repository>
@@ -43,7 +45,7 @@
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>libraries-bom</artifactId>
-                <version>7.0.0</version>
+                <version>${libraries.bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -80,16 +82,20 @@
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-graalvm-support</artifactId>
+            <version>${gcp-graal.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-grpc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-datastore</artifactId>
         </dependency> 
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-storage</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-graalvm-support</artifactId>
-            <version>0.4.0</version>
         </dependency>
     </dependencies>
     <build>
