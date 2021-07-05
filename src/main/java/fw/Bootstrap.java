@@ -5,12 +5,10 @@
  */
 package fw;
 
-import dev.nklab.jl2.web.profile.TracingBootstrap;
 import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 
 /**
  *
@@ -19,10 +17,7 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class Bootstrap {
 
-    @Inject
-    TracingBootstrap tracingBootstrap;
 
     public void handle(@Observes @Initialized(ApplicationScoped.class) Object event) throws IOException {
-        tracingBootstrap.init();
     }
 }

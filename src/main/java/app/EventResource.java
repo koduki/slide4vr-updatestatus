@@ -8,12 +8,10 @@ import com.google.cloud.storage.StorageOptions;
 import static dev.nklab.jl2.web.gcp.datastore.Extentions.*;
 import dev.nklab.jl2.web.profile.Trace;
 import dev.nklab.jl2.web.profile.WebTrace;
-import dev.nklab.kuda.core.Trigger;
 
 import java.io.IOException;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -31,8 +29,6 @@ public class EventResource {
     @ConfigProperty(name = "slide4vr.gcp.bucketname.slide")
     String slideBucket;
 
-    @Inject
-    Trigger trigger;
 
     @GET
     @Path("/healthcheck")
@@ -55,13 +51,6 @@ public class EventResource {
         var userId = params.get("userId").toString();
 
         updateUploadStatus(userId, key);
-
-        trigger.callTrigger(
-                Map.of(
-                        "userId", userId,
-                        "key", key,
-                        "targetParams", Map.of("args", userId + "," + key)),
-                "always");
 
         return Response.ok().build();
     }
