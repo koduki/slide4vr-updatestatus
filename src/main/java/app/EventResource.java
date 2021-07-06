@@ -11,6 +11,7 @@ import dev.nklab.jl2.web.profile.WebTrace;
 
 import java.io.IOException;
 import java.util.Map;
+import javax.annotation.security.PermitAll;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,6 +33,7 @@ public class EventResource {
 
     @GET
     @Path("/healthcheck")
+    @PermitAll
     public Response healthcheck() {
         var options = DatastoreOptions.getDefaultInstance();
         var datastore = options.getService();
@@ -43,6 +45,7 @@ public class EventResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @WebTrace
+    @PermitAll
     public Response invoke(Map<String, Object> params) throws IOException {
         var targetParams = (Map<String, String>) params.get("targetParams");
         System.out.println("params:" + params);
